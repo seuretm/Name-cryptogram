@@ -35,3 +35,7 @@ Technical details:
   delete *.set and *.dat !
 - You need python3 (who still uses python2 ?!)
 - You need the tqdm and argparse packages
+
+UPDATE:
+There is now a less sophisticated but interactive HTML page on which
+you can type text and get an error count.

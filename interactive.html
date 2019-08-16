@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <script>
+        
+        function ascii_array() {
+            res = Array(256);
+            for (i=0; i<256; i++) {
+                res[i] = 0;
+            }
+            return res;
+        }
+        
+        function to_array(str) {
+            return str.split('').sort()
+        }
+        
+        function to_count(arr) {
+            res = ascii_array();
+            for (i=0; i<arr.length; i++) {
+                n = arr[i].charCodeAt(0);
+                if (n!=32 && n>=0 && n<256) {
+                    res[n] += 1;
+                }
+            }
+            if (document.getElementById('merge_ijy').checked) {
+                res['i'.charCodeAt(0)] += res['j'.charCodeAt(0)] + res['y'.charCodeAt(0)];
+                res['j'.charCodeAt(0)] = 0;
+                res['y'.charCodeAt(0)] = 0;
+            }
+            if (document.getElementById('merge_uv').checked) {
+                res['u'.charCodeAt(0)] += res['v'.charCodeAt(0)]
+                res['v'.charCodeAt(0)] = 0;
+            }
+            return res
+        }
+        
+        // Comment for anybody reading this: yeah, I'm not that much
+        // into Javascript. This code is pretty ugly, I totally agree,
+        // but I don't feel like improving it. It works, that's what
+        // matters. - Mathias
+        
+        function run() {
+            base = document.getElementById('base_string').value.toLowerCase();
+            test = document.getElementById('test_string').value.toLowerCase();
+            
+            base_arr = to_array(base);
+            test_arr = to_array(test);
+            
+            base_cnt = to_count(base_arr);
+            test_cnt = to_count(test_arr);
+            
+            // sorted test
+            x = ''
+            for (i=0; i<test_arr.length; i++) {
+                x = x + test_arr[i];
+            }
+            document.getElementById('test_sorted').innerHTML=x;
+            
+            // letter count
+            x = '';
+            y = false;
+            for (i=0; i<test_cnt.length; i++) {
+                if (test_cnt[i]==0) {
+                    continue;
+                }
+                if (y) {
+                    x = x + ', ';
+                }
+                x = x + test_cnt[i]+' '+String.fromCharCode(i);
+                y = true;
+            }
+            document.getElementById('test_count').innerHTML=x;
+            
+            errors = 0
+            
+            // base missing
+            x = '';
+            y = false;
+            for (i=0; i<test_cnt.length; i++) {
+                console.log(i+" "+test_cnt[i]+" "+base_cnt[i]);
+                if (test_cnt[i]<=base_cnt[i]) {
+                    continue;
+                }
+                if (y) {
+                    x = x + ', ';
+                }
+                e = (test_cnt[i]-base_cnt[i])
+                x = x + e +' '+String.fromCharCode(i);
+                errors += e
+                y = true;
+            }
+            document.getElementById('base_missing').innerHTML=x;
+            
+            // base extra
+            x = '';
+            y = false;
+            for (i=0; i<test_cnt.length; i++) {
+                if (test_cnt[i]>=base_cnt[i]) {
+                    continue;
+                }
+                if (y) {
+                    x = x + ', ';
+                }
+                e = (base_cnt[i]-test_cnt[i])
+                x = x + e +' '+String.fromCharCode(i);
+                errors += e
+                y = true;
+            }
+            document.getElementById('base_extra').innerHTML=x;
+            
+            document.getElementById('error_count').innerHTML=errors;
+        }
+    </script>
+    </head>
+    <body>
+    </body>
+
+    <b>Base string:</b><br/>
+    <input id="base_string" size="60" value="aaa b c d eeee ff gg hhhh ii k l nnnnnn ooooooo rrrrrrr sssss tt uuuu"/><br/>
+
+    <br/>
+
+    <b>Test string:</b><br/>
+    <input id="test_string" type="text" size="60" onkeyup="run()"/><br/>
+
+    <br/>
+    
+    <input type="checkbox" id="merge_ijy" checked="true" onclick="run()"> Merge {i, j, y} <br/>
+    <input type="checkbox" id="merge_uv" checked="true" onclick="run()"> Merge {u, v} <br/>
+    
+    <br/>
+
+    <input type="submit" value="Re-compute" onClick="run()"/>
+
+    <br>
+
+    <p>
+        <b>Sorted test string</b>: <span id='test_sorted'>N/A</span>
+    </p>
+    
+    <p>
+        <b>Letter count</b>: <span id='test_count'>N/A</span>
+    </p>
+    
+    <p>
+        <b>Letters not in base</b>: <span id='base_missing'>N/A</span>
+    </p>
+    
+    <p>
+        <b>Letters not used</b>: <span id='base_extra'>N/A</span>
+    </p>
+    
+    <p>
+        <b>Error count</b>: <span id='error_count'>N/A</span>
+    </p>
+    
+    <br/><br/><br/><br/>
+    <small>If you find out anything, please <a href="https://twitter.com/ad_astra_1/status/1141617868984999936?s=20">let us know</a>.</small> <br/>
+    <small>And if you want to learn how the letters are sorted by the computer, Hungarian dancers can <a href="https://www.youtube.com/watch?v=ywWBy6J5gz8&t=0s">show you</a></small>
+</html>
